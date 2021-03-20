@@ -7,15 +7,11 @@ Go to http://localhost:8111 in your browser.
 A debugger such as "pdb" may be helpful for debugging.
 Read about it online.
 """
-import os
-
 # accessible as a variable in index.html:
 from sqlalchemy import *
 from sqlalchemy.pool import NullPool
 from flask import Flask, request, render_template, g, redirect, Response
-
-tmpl_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
-app = Flask(__name__, template_folder=tmpl_dir)
+from app import app
 
 # Connects to our database
 DATABASEURI = "postgresql://xl3082:646915@34.73.36.248/project1"
@@ -87,17 +83,9 @@ def index():
     mycursor = g.conn.execute("SELECT * FROM team")
     data = mycursor.fetchall()
 
-    # render_template looks in the templates/ folder for files.
-    # for example, the below file reads template/index.html
     return render_template("index.html", data=data)
 
 
-# This is an example of a different path.  You can see it at:
-# 
-#     localhost:8111/another
-#
-# Notice that the function name is another() rather than index()
-# The functions for each app.route need to have different names
 @app.route('/another')
 def another():
     return render_template("another.html")
@@ -130,28 +118,3 @@ def login():
     # abort(401)
     # this_is_never_executed()
     return
-
-
-if __name__ == "__main__":
-    import click
-
-    @click.command()
-    @click.option('--debug', is_flag=True)
-    @click.option('--threaded', is_flag=True)
-    @click.argument('HOST', default='0.0.0.0')
-    @click.argument('PORT', default=8111, type=int)
-    def run(debug, threaded, host, port):
-        """
-        This function handles command line parameters.
-        Run the server using:
-
-            python server.py
-
-        Show the help text using:
-
-            python server.py --help
-        """
-        HOST, PORT = host, port
-        print("running on %s:%d" % (HOST, PORT))
-        app.run(host=HOST, port=PORT, debug=debug, threaded=threaded)
-    run()
