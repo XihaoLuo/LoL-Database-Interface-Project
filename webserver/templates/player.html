@@ -12,10 +12,32 @@
       <a href="/team">Team Table</a>
       <a href="/player">Players Table</a>
     </div>
+
+    <table>
+        <thead>
+        <tr>
+            <th>player_ID</th>
+            <th>name</th>
+            <th>role</th>
+        </tr>
+        </thead>
+        <tbody>
+         {% for row in data %}
+            <tr>
+                <td>{{row[0]}}</td>
+                <td>{{row[1]}}</td>
+                <td>{{row[2]}}</td>
+            </tr>
+         {% endfor %}
+        </tbody>
+    </table>
+
+<!--    <p><a href="another">Go to the other page</a></p>-->
+
 <!--    <form method="POST" action="/add">-->
 <!--      <p>Name of new computer scientist: <input type="text" name="name"> <input type="submit" value="Add"></p>-->
 <!--    </form>-->
-     HELLO, random another file.
+
   </body>
 
 </html>

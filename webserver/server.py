@@ -17,7 +17,6 @@ from flask import Flask, request, render_template, g, redirect, Response
 tmpl_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
 app = Flask(__name__, template_folder=tmpl_dir)
 
-#
 # The following is a dummy URI that does not connect to a valid database.
 # You will need to modify it to connect to your Part 2 database in order to use the data.
 #
@@ -28,12 +27,9 @@ app = Flask(__name__, template_folder=tmpl_dir)
 # For example, if you had username zy2431 and password 123123, then the following line would be:
 #
 #     DATABASEURI = "postgresql://zy2431:123123@34.73.36.248/project1"
-#
 DATABASEURI = "postgresql://xl3082:646915@34.73.36.248/project1"  # Modify this with your own credentials you received from Joseph!
 
-#
 # This line creates a database engine that knows how to connect to the URI above.
-#
 engine = create_engine(DATABASEURI)
 
 #
@@ -41,13 +37,6 @@ engine = create_engine(DATABASEURI)
 # Note that this will probably not work if you already have a table named 'test' in your database,
 # containing meaningful data. This is only an example showing you how to run queries in your database using SQLAlchemy.
 #
-# engine.execute("""CREATE TABLE IF NOT EXISTS test (
-#   id serial,
-#   name text
-# );""")
-# engine.execute("""INSERT INTO test(name) VALUES ('grace hopper'), ('alan turing'), ('ada lovelace');""")
-
-
 @app.before_request
 def before_request():
     """
@@ -77,7 +66,6 @@ def teardown_request(exception):
     except Exception as e:
         pass
 
-
 #
 # @app.route is a decorator around index() that means:
 #   run index() whenever the user tries to access the "/" path using a GET request
@@ -101,76 +89,48 @@ def index():
     request.args:     dictionary of URL arguments, e.g., {a:1, b:2} for http://localhost?a=1&b=2
 
     See its API: https://flask.palletsprojects.com/en/1.1.x/api/#incoming-request-data
-  """
-
+    """
     # DEBUG: this is debugging code to see what request looks like
-    print(request.args)
+    # print(request.args)
 
-    #
-    # example of a database query
-    #
-    cursor = g.conn.execute("SELECT name FROM test")
-    names = []
-    for result in cursor:
-        names.append(result['name'])  # can also be accessed using result[0]
-    cursor.close()
+    mycursor = g.conn.execute("SELECT * FROM team")
+    data = mycursor.fetchall()
 
-    #
-    # Flask uses Jinja templates, which is an extension to HTML where you can
-    # pass data to a template and dynamically generate HTML based on the data
-    # (you can think of it as simple PHP)
-    # documentation: https://realpython.com/primer-on-jinja-templating/
-    #
-    # You can see an example template in templates/index.html
-    #
-    # context are the variables that are passed to the template.
-    # for example, "data" key in the context variable defined below will be
-    # accessible as a variable in index.html:
-    #
-    #     # will print: [u'grace hopper', u'alan turing', u'ada lovelace']
-    #     <div>{{data}}</div>
-    #
-    #     # creates a <div> tag for each element in data
-    #     # will print:
-    #     #
-    #     #   <div>grace hopper</div>
-    #     #   <div>alan turing</div>
-    #     #   <div>ada lovelace</div>
-    #     #
-    #     {% for n in data %}
-    #     <div>{{n}}</div>
-    #     {% endfor %}
-    #
-    context = dict(data=names)
-
-    # drops table so it doesn't repeatedly add
-    # engine.execute("""drop table test""")
-
-    #
     # render_template looks in the templates/ folder for files.
     # for example, the below file reads template/index.html
-    #
-    return render_template("index.html", **context)
+    return render_template("index.html", data=data)
 
 
-#
 # This is an example of a different path.  You can see it at:
 # 
 #     localhost:8111/another
 #
 # Notice that the function name is another() rather than index()
 # The functions for each app.route need to have different names
-#
 @app.route('/another')
 def another():
     return render_template("another.html")
 
 
+@app.route('/player')
+def player():
+    mycursor = g.conn.execute("SELECT * FROM player")
+    data = mycursor.fetchall()
+    return render_template("player.html", data=data)
+
+
+@app.route('/team')
+def team():
+    mycursor = g.conn.execute("SELECT * FROM team")
+    data = mycursor.fetchall()
+    return render_template("team.html", data=data)
+
+
 # Example of adding new data to the database
 @app.route('/add', methods=['POST'])
 def add():
-    name = request.form['name']
-    g.conn.execute('INSERT INTO test(name) VALUES (%s)', name)
+    # name = request.form['name']
+    # g.conn.execute('INSERT INTO test(name) VALUES (%s)', name)
     return redirect('/')
 
 
@@ -191,19 +151,16 @@ if __name__ == "__main__":
     @click.argument('PORT', default=8111, type=int)
     def run(debug, threaded, host, port):
         """
-    This function handles command line parameters.
-    Run the server using:
+        This function handles command line parameters.
+        Run the server using:
 
-        python server.py
+            python server.py
 
-    Show the help text using:
+        Show the help text using:
 
-        python server.py --help
-
-    """
+            python server.py --help
+        """
         HOST, PORT = host, port
         print("running on %s:%d" % (HOST, PORT))
         app.run(host=HOST, port=PORT, debug=debug, threaded=threaded)
-
-
     run()
