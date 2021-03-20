@@ -61,7 +61,7 @@ def before_request():
         g.conn = engine.connect()
     except:
         print("uh oh, problem connecting to database")
-        import traceback;
+        import traceback
         traceback.print_exc()
         g.conn = None
 
@@ -176,8 +176,9 @@ def add():
 
 @app.route('/login')
 def login():
-    abort(401)
-    this_is_never_executed()
+    # abort(401)
+    # this_is_never_executed()
+    return
 
 
 if __name__ == "__main__":
