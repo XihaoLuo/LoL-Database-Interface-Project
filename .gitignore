@@ -1,1 +1,3 @@
 .idea/*
+webserver/.idea/*
+webserver/__pycache__/*
