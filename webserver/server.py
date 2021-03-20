@@ -17,17 +17,8 @@ from flask import Flask, request, render_template, g, redirect, Response
 tmpl_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
 app = Flask(__name__, template_folder=tmpl_dir)
 
-# The following is a dummy URI that does not connect to a valid database.
-# You will need to modify it to connect to your Part 2 database in order to use the data.
-#
-# XXX: The URI should be in the format of: 
-#
-#     postgresql://USER:PASSWORD@34.73.36.248/project1
-#
-# For example, if you had username zy2431 and password 123123, then the following line would be:
-#
-#     DATABASEURI = "postgresql://zy2431:123123@34.73.36.248/project1"
-DATABASEURI = "postgresql://xl3082:646915@34.73.36.248/project1"  # Modify this with your own credentials you received from Joseph!
+# Connects to our database
+DATABASEURI = "postgresql://xl3082:646915@34.73.36.248/project1"
 
 # This line creates a database engine that knows how to connect to the URI above.
 engine = create_engine(DATABASEURI)
@@ -40,12 +31,12 @@ engine = create_engine(DATABASEURI)
 @app.before_request
 def before_request():
     """
-  This function is run at the beginning of every web request 
-  (every time you enter an address in the web browser).
-  We use it to setup a database connection that can be used throughout the request.
+    This function is run at the beginning of every web request
+    (every time you enter an address in the web browser).
+    We use it to setup a database connection that can be used throughout the request.
 
-  The variable g is globally accessible.
-  """
+    The variable g is globally accessible.
+    """
     try:
         g.conn = engine.connect()
     except:
@@ -58,9 +49,9 @@ def before_request():
 @app.teardown_request
 def teardown_request(exception):
     """
-  At the end of the web request, this makes sure to close the database connection.
-  If you don't, the database could run out of memory!
-  """
+    At the end of the web request, this makes sure to close the database connection.
+    If you don't, the database could run out of memory!
+    """
     try:
         g.conn.close()
     except Exception as e:
