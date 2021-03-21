@@ -189,7 +189,7 @@ def profilepage():
                 """.format(value)
             )
             matches = cursor.fetchall()
-        except ValueError:
+        except:
             name = "Search does not exist in our database. Sorry :("
             team = ""
             role = ""
@@ -207,4 +207,3 @@ def login():
     # abort(401)
     # this_is_never_executed()
     return
-
