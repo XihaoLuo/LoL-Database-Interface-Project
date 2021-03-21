@@ -1,28 +1,15 @@
-<!doctype html>
-<html>
-  <style>
-    body{
-      font-size: 15pt;
-      font-family: arial;
-    }
-  </style>
+{% extends 'base.html' %}
 
-  <body>
-    <a href="/"><h1>League of Legends Database</h1></a>
-    <div class="topnav">
-      <a href="/team">Team Table</a>
-      <a href="/player">Players Table</a>
-    </div>
-
-    <table>
+{% block content %}
+    <table class = "table table-striped">
         <thead>
-        <tr>
-            <th>team_ID</th>
-            <th>name</th>
-            <th>region</th>
-            <th>coach</th>
-            <th>seeding</th>
-        </tr>
+            <tr>
+                <th>team_ID</th>
+                <th>name</th>
+                <th>region</th>
+                <th>coach</th>
+                <th>seeding</th>
+            </tr>
         </thead>
         <tbody>
          {% for row in data %}
@@ -36,7 +23,4 @@
          {% endfor %}
         </tbody>
     </table>
-
-  </body>
-
-</html>
+{% endblock %}

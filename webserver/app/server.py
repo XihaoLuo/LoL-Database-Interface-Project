@@ -10,7 +10,7 @@ Read about it online.
 # accessible as a variable in index.html:
 from sqlalchemy import *
 from sqlalchemy.pool import NullPool
-from flask import Flask, request, render_template, g, redirect, Response
+from flask import request, render_template, g, redirect, Response
 from app import app
 
 # Connects to our database
@@ -80,15 +80,7 @@ def index():
     # DEBUG: this is debugging code to see what request looks like
     # print(request.args)
 
-    mycursor = g.conn.execute("SELECT * FROM team")
-    data = mycursor.fetchall()
-
-    return render_template("index.html", data=data)
-
-
-@app.route('/another')
-def another():
-    return render_template("another.html")
+    return render_template("index.html")
 
 
 @app.route('/player')
