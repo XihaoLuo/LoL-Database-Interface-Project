@@ -104,15 +104,29 @@ def add():
     return redirect('/')
 
 
-@app.route('/search', methods=['GET'])
-def search():
+# @app.route('/search', methods=['GET'])
+# def search():
+#     team = request.args.get('q')
+#     print(team)
+#     mycursor = g.conn.execute("SELECT * FROM team WHERE name='{}'".format(team))
+#     data = mycursor.fetchall()
+#     # name = request.form['name']
+#     # g.conn.execute('INSERT INTO test(name) VALUES (%s)', name)
+#     return render_template('search.html', data=data)
+
+
+@app.route('/profile', methods=['GET'])
+def teampage():
     team = request.args.get('q')
     print(team)
     mycursor = g.conn.execute("SELECT * FROM team WHERE name='{}'".format(team))
     data = mycursor.fetchall()
-    # name = request.form['name']
-    # g.conn.execute('INSERT INTO test(name) VALUES (%s)', name)
-    return render_template('search.html', data=data)
+    name = data[0][1]
+    region = data[0][2]
+    coach = data[0][3]
+    seeding = data[0][4]
+    print(data)
+    return render_template("teampage.html", name=name, region=region, coach=coach, seeding=seeding)
 
 
 @app.route('/login')
@@ -120,3 +134,4 @@ def login():
     # abort(401)
     # this_is_never_executed()
     return
+
