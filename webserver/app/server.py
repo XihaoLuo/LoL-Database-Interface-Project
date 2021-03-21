@@ -77,15 +77,24 @@ def index():
 
     See its API: https://flask.palletsprojects.com/en/1.1.x/api/#incoming-request-data
     """
-    # DEBUG: this is debugging code to see what request looks like
-
     return render_template("index.html")
 
 
 @app.route('/player')
 def player():
-    mycursor = g.conn.execute("SELECT * FROM player")
+    mycursor = g.conn.execute(
+        """
+        select player.name, team.name, player.role, round((total_kills + total_assists)/total_deaths, 2) as KDA
+        FROM player 
+        left join team on player.team_ID = team.team_ID
+        left join (Select player_id, sum(kills) total_kills, sum(deaths) total_deaths, 
+                   sum(assists) total_assists
+        From player_performance
+        Group by player_id
+        Order by player_id ASC) player_sum_KDA on player.player_id = player_sum_KDA.player_id
+        """)
     data = mycursor.fetchall()
+
     return render_template("player.html", data=data)
 
 
@@ -111,19 +120,8 @@ def add():
     return redirect('/')
 
 
-# @app.route('/search', methods=['GET'])
-# def search():
-#     team = request.args.get('q')
-#     print(team)
-#     mycursor = g.conn.execute("SELECT * FROM team WHERE name='{}'".format(team))
-#     data = mycursor.fetchall()
-#     # name = request.form['name']
-#     # g.conn.execute('INSERT INTO test(name) VALUES (%s)', name)
-#     return render_template('search.html', data=data)
-
-
 @app.route('/profile', methods=['GET'])
-def teampage():
+def profilepage():
     search = request.args.get('q')
 
     try:
@@ -181,13 +179,25 @@ def teampage():
                 """.format(value))
             data = cursor.fetchall()
             kda = data[0][0]
-
-        except:
+            cursor = g.conn.execute(
+                """
+                select match.start_time, match.team1_name, match.team2_name, match.team_victory,
+                       pp.champion, pp.kills, pp.deaths, pp.assists, pp.total_dmg_delt, pp.total_dmg_taken,
+                       pp.turrets_destroyed
+                from player_performance as pp
+                left join match on pp.match_ID = match.match_ID
+                left join player on pp.player_ID = player.player_ID 
+                where player.name = '{}'
+                """.format(value)
+            )
+            matches = cursor.fetchall()
+        except ValueError:
             name = "Search does not exist in our database. Sorry :("
             team = ""
             role = ""
             kda = 0.0
-        return render_template("playerpage.html", name=name, team=team, role=role, kda=kda)
+            matches = []
+        return render_template("playerpage.html", name=name, team=team, role=role, kda=kda, matches=matches)
     elif category == 'region':
         mycursor = g.conn.execute("SELECT * FROM team where region ='{}'".format(value))
         data = mycursor.fetchall()
