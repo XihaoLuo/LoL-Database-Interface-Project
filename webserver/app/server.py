@@ -130,7 +130,6 @@ def profilepage():
         return render_template('index.html')
 
     if category == 'team':
-        print("searched team")
         mycursor = g.conn.execute("SELECT * FROM team WHERE name='{}'".format(value))
         data = mycursor.fetchall()
         try:
@@ -155,7 +154,6 @@ def profilepage():
         return render_template("teampage.html", name=name, region=region, coach=coach, seeding=seeding,
                                players=players, matches=match_data)
     elif category == 'player':
-        print("searched player")
         mycursor = g.conn.execute("SELECT * FROM player WHERE name='{}'".format(value))
         data = mycursor.fetchall()
         try:
