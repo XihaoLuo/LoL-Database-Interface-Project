@@ -78,7 +78,6 @@ def index():
     See its API: https://flask.palletsprojects.com/en/1.1.x/api/#incoming-request-data
     """
     # DEBUG: this is debugging code to see what request looks like
-    # print(request.args)
 
     return render_template("index.html")
 
@@ -103,6 +102,17 @@ def add():
     # name = request.form['name']
     # g.conn.execute('INSERT INTO test(name) VALUES (%s)', name)
     return redirect('/')
+
+
+@app.route('/search', methods=['GET'])
+def search():
+    team = request.args.get('q')
+    print(team)
+    mycursor = g.conn.execute("SELECT * FROM team WHERE name='{}'".format(team))
+    data = mycursor.fetchall()
+    # name = request.form['name']
+    # g.conn.execute('INSERT INTO test(name) VALUES (%s)', name)
+    return render_template('search.html', data=data)
 
 
 @app.route('/login')
