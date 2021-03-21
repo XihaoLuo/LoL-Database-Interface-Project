@@ -96,6 +96,13 @@ def team():
     return render_template("team.html", data=data)
 
 
+@app.route('/match')
+def match():
+    mycursor = g.conn.execute("SELECT * FROM match")
+    data = mycursor.fetchall()
+    return render_template("match.html", matches=data)
+
+
 # Example of adding new data to the database
 @app.route('/add', methods=['POST'])
 def add():
@@ -117,16 +124,74 @@ def add():
 
 @app.route('/profile', methods=['GET'])
 def teampage():
-    team = request.args.get('q')
-    print(team)
-    mycursor = g.conn.execute("SELECT * FROM team WHERE name='{}'".format(team))
-    data = mycursor.fetchall()
-    name = data[0][1]
-    region = data[0][2]
-    coach = data[0][3]
-    seeding = data[0][4]
-    print(data)
-    return render_template("teampage.html", name=name, region=region, coach=coach, seeding=seeding)
+    search = request.args.get('q')
+
+    try:
+        category, value = search.split(":")
+    except:
+        return render_template('index.html')
+
+    if category == 'team':
+        print("searched team")
+        mycursor = g.conn.execute("SELECT * FROM team WHERE name='{}'".format(value))
+        data = mycursor.fetchall()
+        try:
+            name = data[0][1]
+            region = data[0][2]
+            coach = data[0][3]
+            seeding = data[0][4]
+            cursor = g.conn.execute(
+                "SELECT player.name, player.role FROM player left join team on player.team_ID = team.team_ID where team.name = '{}'".format(value))
+            player_data = cursor.fetchall()
+            players = [x for x in player_data]
+            cursor = g.conn.execute(
+                "SELECT * FROM match where team1_name = '{}' OR team2_name = '{}'".format(value, value))
+            match_data = cursor.fetchall()
+        except:
+            name = ""
+            region = ""
+            coach = ""
+            seeding = ""
+            players = []
+            match_data = []
+        return render_template("teampage.html", name=name, region=region, coach=coach, seeding=seeding,
+                               players=players, matches=match_data)
+    elif category == 'player':
+        print("searched player")
+        mycursor = g.conn.execute("SELECT * FROM player WHERE name='{}'".format(value))
+        data = mycursor.fetchall()
+        try:
+            name = data[0][1]
+            role = data[0][2]
+
+            cursor = g.conn.execute(
+                "SELECT team.name FROM player left join team on player.team_ID = team.team_ID where player.name = '{}'".format(value))
+            team = cursor.fetchall()[0][0]
+
+            cursor = g.conn.execute(
+                """
+                Select round((total_kills + total_assists)/total_deaths, 2) as KDA
+                From (Select player_id, sum(kills) total_kills, sum(deaths) total_deaths, 
+                           sum(assists) total_assists
+                From player_performance
+                Group by player_id
+                Order by player_id ASC) player_sum_KDA
+                Join player on player_sum_KDA.player_id = player.player_id
+                WHERE player.name = '{}'
+                """.format(value))
+            data = cursor.fetchall()
+            kda = data[0][0]
+
+        except:
+            name = "Search does not exist in our database. Sorry :("
+            team = ""
+            role = ""
+            kda = 0.0
+        return render_template("playerpage.html", name=name, team=team, role=role, kda=kda)
+    elif category == 'region':
+        mycursor = g.conn.execute("SELECT * FROM team where region ='{}'".format(value))
+        data = mycursor.fetchall()
+        return render_template("team.html", data=data)
 
 
 @app.route('/login')

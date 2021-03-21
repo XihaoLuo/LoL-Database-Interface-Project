@@ -35,81 +35,51 @@
 
                                         <div class="row">
                                             <div class="col-sm-3 col-md-2 col-5">
-                                                <label style="font-weight:bold;">Region: </label>
+                                                <label style="font-weight:bold;">Team: </label>
                                             </div>
                                             <div class="col-md-8 col-6">
-                                                {{ region }}
+                                                {{team}}
                                             </div>
                                         </div>
                                         <hr />
 
                                         <div class="row">
                                             <div class="col-sm-3 col-md-2 col-5">
-                                                <label style="font-weight:bold;">Coach: </label>
+                                                <label style="font-weight:bold;">Role: </label>
                                             </div>
                                             <div class="col-md-8 col-6">
-                                                {{ coach }}
+                                                {{ role }}
                                             </div>
                                         </div>
                                         <hr />
 
+                                        <div class="row">
+                                            <div class="col-sm-3 col-md-2 col-5">
+                                                <label style="font-weight:bold;">KDA: </label>
+                                            </div>
+                                            <div class="col-md-8 col-6">
+                                                {{ kda }}
+                                            </div>
+                                        </div>
+                                        <hr />
 
                                         <div class="row">
                                             <div class="col-sm-3 col-md-2 col-5">
-                                                <label style="font-weight:bold;">Seeding: </label>
+                                                <label style="font-weight:bold;">Win Ratio: </label>
                                             </div>
                                             <div class="col-md-8 col-6">
-                                                {{seeding}}
+                                                Something
                                             </div>
                                         </div>
                                         <hr />
-                                        <div class="row">
-                                            <div class="col-sm-3 col-md-2 col-5">
-                                                <label style="font-weight:bold;">Players: </label>
-                                            </div>
-                                            <div class="col-md-8 col-6">
-                                                {% for player in players %}
-                                                <p>{{ player[0] }} ({{ player[1] }})</p>
-                                                {% endfor %}
-                                            </div>
-                                        </div>
-                                        <hr />
+
                                         <div class="row">
                                             <div class="col-sm-3 col-md-2 col-5">
                                                 <label style="font-weight:bold;">Matches: </label>
                                             </div>
-                                             <table class = "table table-striped">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Date</th>
-                                                        <th>Team 1 Name</th>
-                                                        <th>Team 2 Name</th>
-                                                        <th>Team Victory</th>
-                                                        <th>Team 1 Kills</th>
-                                                        <th>Team 2 Kills</th>
-                                                        <th>Team 1 Turrets</th>
-                                                        <th>Team 2 Turrets</th>
-                                                        <th>Team 1 Gold</th>
-                                                        <th>Team 2 Gold</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    {% for row in matches %}
-                                                        <tr>
-                                                            <td>{{ row[1].strftime('%Y-%m-%d') }}</td>
-                                                            <td>{{ row[3] }}({{ row[5] }})</td>
-                                                            <td>{{ row[4] }}({{ row[6] }})</td>
-                                                            <td>{{ row[7] }}</td>
-                                                            <td>{{ row[8] }}</td>
-                                                            <td>{{ row[9] }}</td>
-                                                            <td>{{ row[10] }}</td>
-                                                            <td>{{ row[11] }}</td>
-                                                            <td>{{ row[12] }}</td>
-                                                            <td>{{ row[13] }}</td>
-                                                        </tr>
-                                                    {% endfor %}
-                                                </tbody>
-                                             </table>
+                                            <div class="col-md-8 col-6">
+                                                Something
+                                            </div>
                                         </div>
                                         <hr />
                                     </div>
